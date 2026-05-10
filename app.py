@@ -367,6 +367,7 @@ Add Class
 <th>Day</th>
 <th>Subject</th>
 <th>Time</th>
+<th>Action</th>                                  
 </tr>
 
 {% for row in data %}
@@ -374,8 +375,24 @@ Add Class
 <tr>
 
 <td>{{row['day']}}</td>
+
 <td>{{row['subject']}}</td>
+
 <td>{{row['time']}}</td>
+
+<td>
+
+<a href="/delete/{{row['id']}}">
+
+<button>
+
+Delete
+
+</button>
+
+</a>
+
+</td>
 
 </tr>
 
@@ -820,7 +837,25 @@ def logout():
 # ============================================
 # RUN APP
 # ============================================
+# ============================================
+# DELETE TIMETABLE CLASS
+# ============================================
 
+@app.route("/delete/<int:id>")
+def delete(id):
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+    cur.execute(
+    "DELETE FROM timetable WHERE id=?",
+    (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/timetable")
 if __name__ == "__main__":
  import os
 
