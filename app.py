@@ -25,11 +25,15 @@ cur = conn.cursor()
 
 # TIMETABLE TABLE
 cur.execute("""
-CREATE TABLE IF NOT EXISTS timetable(
+CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    day TEXT,
+    student_name TEXT,
+    reg_number TEXT,
     subject TEXT,
-    time TEXT
+    date TEXT,
+    month TEXT,
+    year TEXT,
+    status TEXT
 )
 """)
 
@@ -436,15 +440,25 @@ def attendance():
             for i in range(len(subject_list)):
 
                 cur.execute("""
-                INSERT INTO attendance(subject,date,month,year,status)
-                VALUES(?,?,?,?,?)
+INSERT INTO attendance(
+student_name,
+reg_number,
+subject,
+date,
+month,
+year,
+status
+)
+VALUES(?,?,?,?,?,?,?)
                 """, (
-                    subject_list[i],
-                    date,
-                    month,
-                    year,
-                    status_list[i]
-                ))
+session["name"],
+session["reg"],
+subject_list[i],
+date,
+month,
+year,
+status_list[i]
+))
 
             conn.commit()
 
@@ -647,11 +661,12 @@ def summary():
 
         FROM attendance
 
-        WHERE month=?
+WHERE month=?
+AND reg_number=?
 
-        GROUP BY subject
+GROUP BY subject
 
-        """, (month,))
+""", (month, session["reg"]))
 
         data = cur.fetchall()
 
